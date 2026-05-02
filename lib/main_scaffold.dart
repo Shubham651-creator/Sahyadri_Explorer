@@ -3,6 +3,8 @@ import 'package:material_symbols_icons/material_symbols_icons.dart';
 import 'screens/map_screen.dart';
 import 'screens/live_tracking_screen.dart';
 import 'screens/profile_screen.dart';
+import 'screens/settings_screen.dart';
+import 'widgets/app_drawer.dart';
 import 'theme.dart';
 
 class MainScaffold extends StatefulWidget {
@@ -31,15 +33,18 @@ class _MainScaffoldState extends State<MainScaffold> {
   Widget build(BuildContext context) {
     return Scaffold(
       extendBody: true,
+      drawer: const AppDrawer(),
       appBar: AppBar(
         backgroundColor: const Color(0xFFFBFBFB),
         elevation: 0,
         shape: const Border(
           bottom: BorderSide(color: Color(0x1F000000), width: 1),
         ),
-        leading: IconButton(
-          icon: const Icon(Symbols.menu, color: AppColors.primaryContainer),
-          onPressed: () {},
+        leading: Builder(
+          builder: (context) => IconButton(
+            icon: const Icon(Symbols.menu, color: AppColors.primaryContainer),
+            onPressed: () => Scaffold.of(context).openDrawer(),
+          ),
         ),
         title: Text(
           'SAHYADRI EXPLORER',
@@ -52,15 +57,24 @@ class _MainScaffoldState extends State<MainScaffold> {
         actions: [
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
-            child: Container(
-              width: 32,
-              height: 32,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: const Color(0xFFF5F5F4)),
-                image: const DecorationImage(
-                  image: NetworkImage('https://lh3.googleusercontent.com/aida-public/AB6AXuC5bzyJvs1dPbbDGhnGMc8kehdF_lk8bt8PikfStYWkwP4hkilIgY5ahnnc8iZrvonFh1ra3O5VXrKmUTV_LXQ0MO2nWpno1gs87lraETkG6n5gW6oeRXFFr1yD9GfZO3Hffg5cSA6_NtR9WDL3oss8WpLiVtAL4HqLE94TFUMETAgZ1-APnTxlJZ0s0JwA0hjK6jNZyq1oH8rc0ldCk1dTP43UuCkvB7oOvTLyDjowT87qwjJkAJxdT8wDKaOJrb-C2X3mtTokLcA'),
-                  fit: BoxFit.cover,
+            child: InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const SettingsScreen()),
+                );
+              },
+              borderRadius: BorderRadius.circular(16),
+              child: Container(
+                width: 32,
+                height: 32,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: const Color(0xFFF5F5F4)),
+                  image: const DecorationImage(
+                    image: NetworkImage('https://lh3.googleusercontent.com/aida-public/AB6AXuC5bzyJvs1dPbbDGhnGMc8kehdF_lk8bt8PikfStYWkwP4hkilIgY5ahnnc8iZrvonFh1ra3O5VXrKmUTV_LXQ0MO2nWpno1gs87lraETkG6n5gW6oeRXFFr1yD9GfZO3Hffg5cSA6_NtR9WDL3oss8WpLiVtAL4HqLE94TFUMETAgZ1-APnTxlJZ0s0JwA0hjK6jNZyq1oH8rc0ldCk1dTP43UuCkvB7oOvTLyDjowT87qwjJkAJxdT8wDKaOJrb-C2X3mtTokLcA'),
+                    fit: BoxFit.cover,
+                  ),
                 ),
               ),
             ),
