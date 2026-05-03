@@ -2,9 +2,99 @@ import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
 import '../theme.dart';
 import '../main_scaffold.dart';
+import '../services/auth_service.dart';
 
-class OnboardingScreen extends StatelessWidget {
+class OnboardingScreen extends StatefulWidget {
   const OnboardingScreen({super.key});
+
+  @override
+  State<OnboardingScreen> createState() => _OnboardingScreenState();
+}
+
+class _OnboardingScreenState extends State<OnboardingScreen> {
+  final AuthService _authService = AuthService();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  bool _isLoading = false;
+  bool _isEmailLoading = false;
+  bool _isLogin = true;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _handleEmailAuth() async {
+    final email = _emailController.text.trim();
+    final password = _passwordController.text.trim();
+
+    if (email.isEmpty || password.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter email and password')),
+      );
+      return;
+    }
+
+    setState(() {
+      _isEmailLoading = true;
+    });
+
+    try {
+      if (_isLogin) {
+        await _authService.signInWithEmailAndPassword(email, password);
+      } else {
+        await _authService.createUserWithEmailAndPassword(email, password);
+      }
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const MainScaffold()),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${_isLogin ? "Login" : "Sign Up"} failed: $e')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isEmailLoading = false;
+        });
+      }
+    }
+  }
+
+  Future<void> _handleGoogleSignIn() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      final userCredential = await _authService.signInWithGoogle();
+      if (userCredential != null && mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const MainScaffold()),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Sign-in failed: $e')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +129,7 @@ class OnboardingScreen extends StatelessWidget {
                     end: Alignment.topCenter,
                     colors: [
                       AppColors.background,
-                      AppColors.background.withOpacity(0),
+                      AppColors.background.withValues(alpha: 0),
                     ],
                     stops: const [0.3, 1.0],
                   ),
@@ -113,6 +203,7 @@ class OnboardingScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       TextField(
+                        controller: _emailController,
                         decoration: InputDecoration(
                           hintText: 'name@example.com',
                           filled: true,
@@ -125,16 +216,34 @@ class OnboardingScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(height: 16),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Text(
+                          'PASSWORD',
+                          style: Theme.of(context).textTheme.labelSmall,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      TextField(
+                        controller: _passwordController,
+                        obscureText: true,
+                        decoration: InputDecoration(
+                          hintText: '••••••••',
+                          filled: true,
+                          fillColor: AppColors.surfaceContainerLow,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(16),
+                            borderSide: BorderSide.none,
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
                       SizedBox(
                         width: double.infinity,
                         height: 56,
                         child: ElevatedButton(
-                          onPressed: () {
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(builder: (context) => const MainScaffold()),
-                            );
-                          },
+                          onPressed: _isEmailLoading ? null : _handleEmailAuth,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primary,
                             foregroundColor: AppColors.onPrimary,
@@ -143,10 +252,38 @@ class OnboardingScreen extends StatelessWidget {
                             ),
                             elevation: 0,
                           ),
+                          child: _isEmailLoading
+                              ? const SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: AppColors.onPrimary,
+                                  ),
+                                )
+                              : Text(
+                                  _isLogin ? 'Login with Email' : 'Sign Up with Email',
+                                  style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                                    color: AppColors.onPrimary,
+                                  ),
+                                ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      Center(
+                        child: TextButton(
+                          onPressed: () {
+                            setState(() {
+                              _isLogin = !_isLogin;
+                            });
+                          },
                           child: Text(
-                            'Continue with Email',
-                            style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                              color: AppColors.onPrimary,
+                            _isLogin
+                                ? "Don't have an account? Sign up"
+                                : "Already have an account? Login",
+                            style: TextStyle(
+                              color: AppColors.primary,
+                              fontWeight: FontWeight.bold,
                             ),
                           ),
                         ),
@@ -172,29 +309,35 @@ class OnboardingScreen extends StatelessWidget {
                         width: double.infinity,
                         height: 56,
                         child: OutlinedButton(
-                          onPressed: () {},
+                          onPressed: _isLoading ? null : _handleGoogleSignIn,
                           style: OutlinedButton.styleFrom(
                             backgroundColor: Colors.white,
-                            side: BorderSide(color: AppColors.outlineVariant.withOpacity(0.3)),
+                            side: BorderSide(color: AppColors.outlineVariant.withValues(alpha: 0.3)),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(999),
                             ),
                           ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              // Simplified Google Icon using a colored box or SVG would be better
-                              // For now, just a placeholder
-                              const Icon(Icons.g_mobiledata, color: Colors.blue, size: 32),
-                              const SizedBox(width: 8),
-                              Text(
-                                'Continue with Google',
-                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                  fontWeight: FontWeight.w500,
+                          child: _isLoading
+                              ? const SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator(strokeWidth: 2),
+                                )
+                              : Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    // Simplified Google Icon using a colored box or SVG would be better
+                                    // For now, just a placeholder
+                                    const Icon(Icons.g_mobiledata, color: Colors.blue, size: 32),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      'Continue with Google',
+                                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ),
-                            ],
-                          ),
                         ),
                       ),
                     ],
@@ -280,9 +423,9 @@ class OnboardingScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: AppColors.surfaceContainerHigh.withOpacity(0.5),
+        color: AppColors.surfaceContainerHigh.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(color: AppColors.outlineVariant.withOpacity(0.1)),
+        border: Border.all(color: AppColors.outlineVariant.withValues(alpha: 0.1)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -311,7 +454,7 @@ class OnboardingScreen extends StatelessWidget {
       width: isActive ? 24 : 8,
       height: 8,
       decoration: BoxDecoration(
-        color: isActive ? AppColors.primary : AppColors.primary.withOpacity(0.2),
+        color: isActive ? AppColors.primary : AppColors.primary.withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(999),
       ),
     );

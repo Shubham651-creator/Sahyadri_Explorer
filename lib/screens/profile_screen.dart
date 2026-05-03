@@ -25,7 +25,7 @@ class ProfileScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(32),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
+                          color: Colors.black.withValues(alpha: 0.2),
                           blurRadius: 24,
                         ),
                       ],
@@ -95,15 +95,15 @@ class ProfileScreen extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: AppColors.primary.withOpacity(0.05)),
+              border: Border.all(color: AppColors.primary.withValues(alpha: 0.05)),
             ),
             child: Column(
               children: [
-                _buildStatRow(context, Symbols.route, 'TOTAL DISTANCE', '120', 'km', AppColors.primaryFixedDim.withOpacity(0.2), AppColors.primary),
+                _buildStatRow(context, Symbols.route, 'TOTAL DISTANCE', '120', 'km', AppColors.primaryFixedDim.withValues(alpha: 0.2), AppColors.primary),
                 const Divider(height: 1, color: Color(0x0D061B0E)),
-                _buildStatRow(context, Symbols.fort, 'FORTS CONQUERED', '8', '', AppColors.secondaryFixed.withOpacity(0.2), AppColors.secondary),
+                _buildStatRow(context, Symbols.fort, 'FORTS CONQUERED', '8', '', AppColors.secondaryFixed.withValues(alpha: 0.2), AppColors.secondary),
                 const Divider(height: 1, color: Color(0x0D061B0E)),
-                _buildStatRow(context, Symbols.landscape, 'TOTAL TREKS', '15', '', AppColors.tertiaryFixed.withOpacity(0.3), AppColors.tertiary),
+                _buildStatRow(context, Symbols.landscape, 'TOTAL TREKS', '15', '', AppColors.tertiaryFixed.withValues(alpha: 0.3), AppColors.tertiary),
               ],
             ),
           ),
@@ -115,12 +115,14 @@ class ProfileScreen extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('Achievement Badges', style: Theme.of(context).textTheme.displayMedium),
-                  Text('Your milestones in the Western Ghats', style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.outline)),
-                ],
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('Achievement Badges', style: Theme.of(context).textTheme.displayMedium),
+                    Text('Your milestones in the Western Ghats', style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.outline)),
+                  ],
+                ),
               ),
               TextButton.icon(
                 onPressed: () {},
@@ -152,10 +154,10 @@ class ProfileScreen extends StatelessWidget {
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(24),
-              border: Border.all(color: AppColors.primary.withOpacity(0.05)),
+              border: Border.all(color: AppColors.primary.withValues(alpha: 0.05)),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.02),
+                  color: Colors.black.withValues(alpha: 0.02),
                   blurRadius: 10,
                 ),
               ],
@@ -178,7 +180,7 @@ class ProfileScreen extends StatelessWidget {
                         child: Container(
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.9),
+                            color: Colors.white.withValues(alpha: 0.9),
                             borderRadius: BorderRadius.circular(999),
                           ),
                           child: Text(
@@ -198,16 +200,18 @@ class ProfileScreen extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Torna Fort Expedition', style: Theme.of(context).textTheme.displaySmall),
-                              const SizedBox(height: 4),
-                              Text(
-                                'Difficult • 12.4 km total • 840m Elevation',
-                                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.outline, fontSize: 14),
-                              ),
-                            ],
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Torna Fort Expedition', style: Theme.of(context).textTheme.displaySmall),
+                                const SizedBox(height: 4),
+                                Text(
+                                  'Difficult • 12.4 km total • 840m Elevation',
+                                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.outline, fontSize: 14),
+                                ),
+                              ],
+                            ),
                           ),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -302,7 +306,7 @@ class ProfileScreen extends StatelessWidget {
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
+                    color: Colors.black.withValues(alpha: 0.05),
                     blurRadius: 10,
                     offset: const Offset(0, 4),
                   ),

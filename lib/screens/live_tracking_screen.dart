@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:material_symbols_icons/material_symbols_icons.dart';
+import '../models/fort_model.dart';
 import '../theme.dart';
 
 class LiveTrackingScreen extends StatelessWidget {
-  const LiveTrackingScreen({super.key});
+  final Fort? activeFort;
+
+  const LiveTrackingScreen({super.key, this.activeFort});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +24,7 @@ class LiveTrackingScreen extends StatelessWidget {
         Center(
           child: Opacity(
             opacity: 0.8,
-            child: Icon(Symbols.route, size: 300, color: AppColors.secondary.withOpacity(0.5)),
+            child: Icon(Symbols.route, size: 300, color: AppColors.secondary.withValues(alpha: 0.5)),
           ),
         ),
 
@@ -79,7 +82,7 @@ class LiveTrackingScreen extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             decoration: BoxDecoration(
-              color: Colors.white.withOpacity(0.6),
+              color: Colors.white.withValues(alpha: 0.6),
             ),
             child: Column(
               children: [
@@ -121,29 +124,37 @@ class LiveTrackingScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.9),
+        color: Colors.white.withValues(alpha: 0.9),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.primary.withOpacity(0.05)),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.05)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Icon(icon, size: 14, color: AppColors.onSurfaceVariant),
-              const SizedBox(width: 4),
-              Text(label, style: Theme.of(context).textTheme.labelSmall?.copyWith(fontSize: 10)),
-            ],
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Row(
+              children: [
+                Icon(icon, size: 14, color: AppColors.onSurfaceVariant),
+                const SizedBox(width: 4),
+                Text(label, style: Theme.of(context).textTheme.labelSmall?.copyWith(fontSize: 10)),
+              ],
+            ),
           ),
           const SizedBox(height: 4),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.baseline,
-            textBaseline: TextBaseline.alphabetic,
-            children: [
-              Text(value, style: Theme.of(context).textTheme.displayMedium),
-              const SizedBox(width: 2),
-              Text(unit, style: Theme.of(context).textTheme.labelSmall?.copyWith(color: AppColors.onSurfaceVariant)),
-            ],
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            alignment: Alignment.centerLeft,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.baseline,
+              textBaseline: TextBaseline.alphabetic,
+              children: [
+                Text(value, style: Theme.of(context).textTheme.displayMedium),
+                const SizedBox(width: 2),
+                Text(unit, style: Theme.of(context).textTheme.labelSmall?.copyWith(color: AppColors.onSurfaceVariant)),
+              ],
+            ),
           ),
         ],
       ),
@@ -158,7 +169,7 @@ class LiveTrackingScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 10,
           ),
         ],
@@ -171,7 +182,7 @@ class LiveTrackingScreen extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.1),
+                  color: Colors.white.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Icon(Symbols.filter_hdr, color: Colors.white, size: 20),
@@ -180,7 +191,7 @@ class LiveTrackingScreen extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('ELEVATION GAIN', style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Colors.white.withOpacity(0.6), fontSize: 10)),
+                  Text('ELEVATION GAIN', style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Colors.white.withValues(alpha: 0.6), fontSize: 10)),
                   Text('240m', style: Theme.of(context).textTheme.displaySmall?.copyWith(color: Colors.white)),
                 ],
               ),
@@ -196,7 +207,7 @@ class LiveTrackingScreen extends StatelessWidget {
                 width: 4,
                 height: 32 * heights[index],
                 decoration: BoxDecoration(
-                  color: index == 6 ? AppColors.secondary : Colors.white.withOpacity(0.2 + (index * 0.1)),
+                  color: index == 6 ? AppColors.secondary : Colors.white.withValues(alpha: 0.2 + (index * 0.1)),
                   borderRadius: BorderRadius.circular(2),
                 ),
               );
@@ -212,11 +223,11 @@ class LiveTrackingScreen extends StatelessWidget {
       width: 64,
       height: 64,
       decoration: BoxDecoration(
-        color: Colors.white.withOpacity(0.9),
+        color: Colors.white.withValues(alpha: 0.9),
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 20,
           ),
         ],
@@ -259,12 +270,12 @@ class LiveTrackingScreen extends StatelessWidget {
       width: 64,
       height: 64,
       decoration: BoxDecoration(
-        color: isOutlined ? Colors.white.withOpacity(0.9) : color,
+        color: isOutlined ? Colors.white.withValues(alpha: 0.9) : color,
         shape: BoxShape.circle,
         border: isOutlined ? Border.all(color: color, width: 2) : null,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 0.1),
             blurRadius: 10,
           ),
         ],
@@ -282,7 +293,7 @@ class LiveTrackingScreen extends StatelessWidget {
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.3),
+            color: Colors.black.withValues(alpha: 0.3),
             blurRadius: 20,
             offset: const Offset(0, 8),
           ),
